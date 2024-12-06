@@ -1,5 +1,7 @@
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 import {api} from "~/api/index.js";
+import { useAuthStore } from "~/stores/auth.js";
+import { ref } from 'vue';
 
 export const useRatingStore = defineStore('rating', () => {
     const authStore = useAuthStore();
@@ -19,6 +21,7 @@ export const useRatingStore = defineStore('rating', () => {
         });
         await fetchRatingByUserId();
     }
+
     const fetchRatingByUserId = async () => {
         const res = await api.get(`/users/${authStore.authData.id}/ratings`, {
             headers: {
@@ -28,12 +31,21 @@ export const useRatingStore = defineStore('rating', () => {
         ratings.value = res.data.ratings;
     }
 
+    const deleteRating = async (userId, ratingId) => {
+        await api.delete(`/users/${userId}/ratings/${ratingId}`, {
+            headers: {
+                Authorization: `Bearer ${authStore.authData.token}`,
+            }
+        });
+        await fetchRatingByUserId();
+    }
 
     return {
         addRating,
         ratings,
         fetchRatingByUserId,
         userRatingByFilmId,
+        deleteRating,
     }
 });
 

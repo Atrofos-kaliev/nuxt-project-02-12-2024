@@ -19,7 +19,7 @@ const register = async () => {
     return;
   }
 
-  try {
+  try { // any
     await authStore.signup({
       fio: fio.value,
       email: email.value,

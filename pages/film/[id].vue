@@ -1,7 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import {useFilmStore} from "~/stores/film.js";
 import { useReviewStore } from "~/stores/review.js";
 import {useAuthStore} from "~/stores/auth.js";
+import {ref} from "vue";
+import { useRoute } from "vue-router";
 
 const filmStore = useFilmStore();
 const route = useRoute();
@@ -20,6 +22,7 @@ const sendReview = async () => {
   alert('Your review was added successfully');
 }
 </script>
+
 
 <template>
   <template v-if="filmStore.film">
@@ -77,29 +80,6 @@ const sendReview = async () => {
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
-
-
-
-
-<!--  <div class="row">-->
-<!--    <div class="col-12 fs-4 mt-2">Reviews</div>-->
-<!--    <div class="row">-->
-<!--      <div class="col">-->
-<!--        <div class="row ">-->
-<!--            <div class="col-md-10 fs-5 fw-bold">Ivan</div>-->
-<!--            <div class="col-md-2t ext-end">04.24.2024</div>-->
-<!--        </div>-->
-<!--        <div class="row">-->
-<!--          <div class="col fs-6">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti dignissimos doloremque doloribus eaque esse fugiat fugit harum inventore laboriosam molestias nemo non numquam placeat, quas quo reiciendis repudiandae sunt ut?</div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="col-12">-->
-<!--        <hr class="border border-success border-2 opacity-50">-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-
-
 </template>
 
 <style scoped>

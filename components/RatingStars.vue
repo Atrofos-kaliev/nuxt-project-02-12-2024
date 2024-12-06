@@ -6,7 +6,7 @@ const props = defineProps({
   type: Number,
   required: true,
   }
-})
+});
 
 const ratingStore = useRatingStore();
 ratingStore.fetchRatingByUserId();

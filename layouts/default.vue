@@ -1,32 +1,15 @@
 <script setup lang="ts">
 import {useAuthStore} from "~/stores/auth";
 
+
 const authStore = useAuthStore();
-const router = useRouter();
+const route = useRoute();
+
 const logout = async () => {
   await authStore.signout();
 }
 </script>
 <template>
-<!--  <nav class="navbar navbar-expand-lg bg-body-tertiary">-->
-<!--    <div class="container-fluid">-->
-<!--      <NuxtLink to="/" class="navbar-link">KinoTower</NuxtLink>-->
-<!--      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">-->
-<!--        <span class="navbar-toggler-icon"></span>-->
-<!--      </button>-->
-<!--        <template v-if="!authStore.authData">-->
-<!--          <button class="btn btn-outline-success me-2" type="submit" @click="$router.push('/signup')">signUp</button>-->
-<!--          <button type="button" class="btn btn-outline-info" @click="$router.push('/signin')">SignIn</button>-->
-<!--        </template>-->
-<!--        <template v-else>-->
-<!--          <NuxtLink to="/" class="navbar-link">Profile</NuxtLink>-->
-<!--          <button @click="logout" type="button" class="btn btn-outline-danger">SignOut</button>-->
-<!--        </template>-->
-<!--      </div>-->
-<!--  </nav>-->
-<!--  <div class="container">-->
-<!--    <slot />-->
-<!--  </div>-->
     <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
       <div class="container-fluid">
         <NuxtLink to="/" class="navbar-brand text-primary fw-bold">KinoTower</NuxtLink>
@@ -60,7 +43,7 @@ const logout = async () => {
               </button>
             </template>
             <template v-else>
-              <NuxtLink to="/" class="btn btn-outline-primary" @click="$router.push('/profile')">Profile</NuxtLink>
+              <NuxtLink to="/" class="btn btn-outline-primary" @click="$router.push('/profile/')">Profile</NuxtLink>
               <button
                   @click="logout"
                   type="button"

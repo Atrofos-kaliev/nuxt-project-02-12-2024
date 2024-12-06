@@ -1,5 +1,7 @@
 import {defineStore} from "pinia";
 import {api} from "~/api/index.js";
+import { useCookie} from "#app";
+import { ref } from "vue";
 
 export const useAuthStore = defineStore("auth", () => {
     const authData = ref(null);
@@ -9,10 +11,11 @@ export const useAuthStore = defineStore("auth", () => {
         try {
             console.log("Отправляемые данные:", data);
             const res = await api.post("/auth/signup", data);
-            authData.value = res.data;
+            authData.value = { ...res.data, ...data };
             saveAuthData();
         } catch (e) {
-            throw new Error(e.response.data).message;
+            console.error("Ошибка при регистрации:", e.response?.data || e.message);
+            throw new Error(e.response?.data || e.message);
         }
     };
 
@@ -26,6 +29,29 @@ export const useAuthStore = defineStore("auth", () => {
         }
     };
 
+    const fetchUserData = async (userId, token) => {
+        try {
+            const res = await api.get(`/users/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            if (res.data) {
+                authData.value = {
+                    ...authData.value,
+                    email: res.data.email,
+                    birthday: res.data.birthday,
+                    gender: res.data.gender.name,
+                    reviewCount: res.data.reviewCount,
+                    ratingCount: res.data.ratingCount
+                };
+                saveAuthData();
+            }
+        } catch (e) {
+            console.error("Ошибка при получении данных пользователя:", e.response ? e.response.data : e.message);
+        }
+    };
+
     const signout = async () => {
         await api.post("/auth/signout", null, {
             headers: {
@@ -34,6 +60,35 @@ export const useAuthStore = defineStore("auth", () => {
         });
         removeAuthData();
     }
+
+    const updateUser = async (data) => {
+        try {
+            const res = await api.put('/users', data, {
+                headers: {
+                    Authorization: `Bearer ${authData.value.token}`,
+                }
+            });
+            if (res.data) {
+                authData.value = { ...authData.value, ...data };
+                saveAuthData();
+            }
+        } catch (e) {
+            console.error("Ошибка при обновлении данных пользователя:", e.response ? e.response.data : e.message);
+        }
+    };
+
+    const deleteAccount = async () => {
+        try {
+            await api.delete('/users', {
+                headers: {
+                    Authorization: `Bearer ${authData.value.token}`,
+                }
+            });
+            removeAuthData();
+        } catch (e) {
+            console.error("Ошибка при удалении аккаунта:", e.response ? e.response.data : e.message);
+        }
+    };
 
     const saveAuthData = () => {
         if (authData.value) {
@@ -48,16 +103,23 @@ export const useAuthStore = defineStore("auth", () => {
 
     const readAuthData = () => {
         if (authCookie.value) {
-            authData.value = JSON.parse(atob(authCookie.value));
+            try {
+                authData.value = JSON.parse(atob(authCookie.value));
+                console.log("Прочитанные данные:", authData.value);
+                fetchUserData(authData.value.id, authData.value.token);
+            } catch (e) {
+                console.error("Ошибка при чтении данных из куки:", e);
+            }
         }
     };
     readAuthData();
-
 
     return {
         authData,
         signup,
         signin,
         signout,
+        updateUser,
+        deleteAccount,
     }
 });
